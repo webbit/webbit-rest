@@ -42,10 +42,10 @@ rest.GET("/people/{name}/animals/{petName}", new HttpHandler() {
 <dependency>
     <groupId>org.webbitserver</groupId>
     <artifactId>webbit-rest</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
 ### Not Maven
 
-https://oss.sonatype.org/content/repositories/releases/org/webbitserver/webbit-rest/0.1.0/webbit-rest-0.1.0.jar
+https://oss.sonatype.org/content/repositories/releases/org/webbitserver/webbit-rest/0.2.0/webbit-rest-0.2.0.jar
