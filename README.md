@@ -1,7 +1,7 @@
 # Webbit-REST
 
-Webbit-REST is a small [Sinatra](http://www.sinatrarb.com/)-inspired API for [Webbit](https://github.com/webbit/webbit).
-It is based on [RFC6750](http://tools.ietf.org/html/rfc6570) and the excellent [wo-furi](http://code.google.com/p/wo-furi/) library.
+Webbit-REST is a small [Sinatra](http://www.sinatrarb.com/)-inspired API for the [Webbit](https://github.com/webbit/webbit) web server.
+It is based on [RFC 6570](http://tools.ietf.org/html/rfc6570) and the excellent [wo-furi](http://code.google.com/p/wo-furi/) library.
 
 ## Sample usage:
 
