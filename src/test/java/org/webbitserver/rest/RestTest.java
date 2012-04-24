@@ -15,7 +15,6 @@ import static org.junit.Assert.assertEquals;
 import static org.webbitserver.WebServers.createWebServer;
 import static org.webbitserver.rest.Rest.param;
 import static org.webbitserver.rest.Rest.params;
-import static org.webbitserver.rest.Rest.redirect;
 
 public class RestTest {
     private WebServer webServer = createWebServer(59504);
@@ -30,7 +29,7 @@ public class RestTest {
     public void exposesTemplateUriParams() throws IOException, InterruptedException, ExecutionException {
         rest.GET("/people/{name}/pets/{petName}", new HttpHandler() {
             @Override
-            public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) throws Exception {
+            public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) {
                 res.content(String.format("Name: %s\nPet: %s\n", params(req).get("name"), params(req).get("petName"))).end();
             }
         });
@@ -44,7 +43,7 @@ public class RestTest {
 
         rest.GET("/people/{name}/animals/{petName}", new HttpHandler() {
             @Override
-            public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) throws Exception {
+            public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) {
                 Rest.redirect(res, "/people/{name}/pets/{petName}",
                         "name", param(req, "name"),
                         "petName", param(req, "petName")
@@ -54,7 +53,7 @@ public class RestTest {
 
         rest.GET("/people/{name}/pets/{petName}", new HttpHandler() {
             @Override
-            public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) throws Exception {
+            public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) {
                 res.content(String.format("Name: %s\nPet: %s\n", param(req, "name"), param(req, "petName"))).end();
             }
         });

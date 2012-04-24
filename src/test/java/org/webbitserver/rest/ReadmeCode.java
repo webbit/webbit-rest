@@ -15,7 +15,7 @@ public class ReadmeCode {
         Rest rest = new Rest(webServer);
         rest.GET("/people/{name}/pets/{petName}", new HttpHandler() {
             @Override
-            public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) throws Exception {
+            public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) {
                 String name = Rest.param(req, "name");
                 String petName = Rest.param(req, "petName");
                 res.content(String.format("Name: %s\nPet: %s\n", name, petName)).end();

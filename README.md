@@ -10,7 +10,7 @@ WebServer webServer = new NettyWebServer(9991);
 Rest rest = new Rest(webServer);
 rest.GET("/people/{name}/pets/{petName}", new HttpHandler() {
     @Override
-    public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) throws Exception {
+    public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) {
         String name = Rest.param(req, "name");
         String petName = Rest.param(req, "petName");
         res.content(String.format("Name: %s\nPet: %s\n", name, petName)).end();
@@ -25,7 +25,7 @@ System.out.println("Try this: curl -i localhost:9991/people/Mickey/pets/Pluto");
 ```java
 rest.GET("/people/{name}/animals/{petName}", new HttpHandler() {
     @Override
-    public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) throws Exception {
+    public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) {
         Rest.redirect(res, "/people/{name}/pets/{petName}",
                 "name", param(req, "name"),
                 "petName", param(req, "petName")
