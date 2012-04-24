@@ -3,7 +3,7 @@
 Webbit-REST is a small [Sinatra](http://www.sinatrarb.com/)-inspired API for [Webbit](https://github.com/webbit/webbit).
 It is based on [RFC6750](http://tools.ietf.org/html/rfc6570) and the excellent [wo-furi](http://code.google.com/p/wo-furi/) library.
 
-Sample usage:
+## Sample usage:
 
 ```java
 WebServer webServer = new NettyWebServer(9991);
@@ -20,7 +20,7 @@ webServer.start().get();
 System.out.println("Try this: curl -i localhost:9991/people/Mickey/pets/Pluto");
 ```
 
-Redirecting:
+## Redirecting:
 
 ```java
 rest.GET("/people/{name}/animals/{petName}", new HttpHandler() {
@@ -33,3 +33,19 @@ rest.GET("/people/{name}/animals/{petName}", new HttpHandler() {
     }
 });
 ```
+
+## Installation
+
+### Maven
+
+```xml
+<dependency>
+    <groupId>org.webbitserver</groupId>
+    <artifactId>webbit-rest</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
+### Not Maven
+
+https://oss.sonatype.org/content/repositories/releases/org/webbitserver/webbit-rest/0.1.0/webbit-rest-0.1.0.jar
