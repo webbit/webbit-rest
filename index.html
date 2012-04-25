@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Webbit-rest by webbit</title>
+    
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Webbit-rest</h1>
+        <p>An uri-template based REST API for Webbit</p>
+        <p class="view"><a href="https://github.com/webbit/webbit-rest">View the Project on GitHub <small>webbit/webbit-rest</small></a></p>
+        <ul>
+          <li><a href="https://github.com/webbit/webbit-rest/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/webbit/webbit-rest/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/webbit/webbit-rest">Fork On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>Webbit-REST</h1>
+
+<p>Webbit-REST is a small <a href="http://www.sinatrarb.com/">Sinatra</a>-inspired API for the <a href="https://github.com/webbit/webbit">Webbit</a> web server.
+It is based on <a href="http://tools.ietf.org/html/rfc6570">RFC 6570</a> and the excellent <a href="http://code.google.com/p/wo-furi/">wo-furi</a> library.</p>
+
+<h2>Sample usage:</h2>
+
+<div class="highlight">
+<pre><span class="n">WebServer</span> <span class="n">webServer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NettyWebServer</span><span class="o">(</span><span class="mi">9991</span><span class="o">);</span>
+<span class="n">Rest</span> <span class="n">rest</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Rest</span><span class="o">(</span><span class="n">webServer</span><span class="o">);</span>
+<span class="n">rest</span><span class="o">.</span><span class="na">GET</span><span class="o">(</span><span class="s">"/people/{name}/pets/{petName}"</span><span class="o">,</span> <span class="k">new</span> <span class="n">HttpHandler</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handleHttpRequest</span><span class="o">(</span><span class="n">HttpRequest</span> <span class="n">req</span><span class="o">,</span> <span class="n">HttpResponse</span> <span class="n">res</span><span class="o">,</span> <span class="n">HttpControl</span> <span class="n">ctl</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">String</span> <span class="n">name</span> <span class="o">=</span> <span class="n">Rest</span><span class="o">.</span><span class="na">param</span><span class="o">(</span><span class="n">req</span><span class="o">,</span> <span class="s">"name"</span><span class="o">);</span>
+        <span class="n">String</span> <span class="n">petName</span> <span class="o">=</span> <span class="n">Rest</span><span class="o">.</span><span class="na">param</span><span class="o">(</span><span class="n">req</span><span class="o">,</span> <span class="s">"petName"</span><span class="o">);</span>
+        <span class="n">res</span><span class="o">.</span><span class="na">content</span><span class="o">(</span><span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"Name: %s\nPet: %s\n"</span><span class="o">,</span> <span class="n">name</span><span class="o">,</span> <span class="n">petName</span><span class="o">)).</span><span class="na">end</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+<span class="n">webServer</span><span class="o">.</span><span class="na">start</span><span class="o">().</span><span class="na">get</span><span class="o">();</span>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Try this: curl -i localhost:9991/people/Mickey/pets/Pluto"</span><span class="o">);</span>
+</pre>
+</div>
+
+
+<h2>Redirecting:</h2>
+
+<div class="highlight">
+<pre><span class="n">rest</span><span class="o">.</span><span class="na">GET</span><span class="o">(</span><span class="s">"/people/{name}/animals/{petName}"</span><span class="o">,</span> <span class="k">new</span> <span class="n">HttpHandler</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handleHttpRequest</span><span class="o">(</span><span class="n">HttpRequest</span> <span class="n">req</span><span class="o">,</span> <span class="n">HttpResponse</span> <span class="n">res</span><span class="o">,</span> <span class="n">HttpControl</span> <span class="n">ctl</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Rest</span><span class="o">.</span><span class="na">redirect</span><span class="o">(</span><span class="n">res</span><span class="o">,</span> <span class="s">"/people/{name}/pets/{petName}"</span><span class="o">,</span>
+                <span class="s">"name"</span><span class="o">,</span> <span class="n">param</span><span class="o">(</span><span class="n">req</span><span class="o">,</span> <span class="s">"name"</span><span class="o">),</span>
+                <span class="s">"petName"</span><span class="o">,</span> <span class="n">param</span><span class="o">(</span><span class="n">req</span><span class="o">,</span> <span class="s">"petName"</span><span class="o">)</span>
+        <span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre>
+</div>
+
+
+<h2>Installation</h2>
+
+<h3>Maven</h3>
+
+<div class="highlight">
+<pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.webbitserver<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>webbit-rest<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>0.2.0<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre>
+</div>
+
+
+<h3>Not Maven</h3>
+
+<p><a href="https://oss.sonatype.org/content/repositories/releases/org/webbitserver/webbit-rest/0.2.0/webbit-rest-0.2.0.jar">https://oss.sonatype.org/content/repositories/releases/org/webbitserver/webbit-rest/0.2.0/webbit-rest-0.2.0.jar</a></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/webbit">webbit</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
