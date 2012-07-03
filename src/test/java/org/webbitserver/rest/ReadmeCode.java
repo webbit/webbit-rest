@@ -12,12 +12,12 @@ import java.util.concurrent.ExecutionException;
 public class ReadmeCode {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         WebServer webServer = new NettyWebServer(9991);
-        Rest rest = new Rest(webServer);
+        final Rest rest = new Rest(webServer);
         rest.GET("/people/{name}/pets/{petName}", new HttpHandler() {
             @Override
             public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) {
-                String name = Rest.param(req, "name");
-                String petName = Rest.param(req, "petName");
+                String name = rest.stringParam(req, "name");
+                String petName = rest.stringParam(req, "petName");
                 res.content(String.format("Name: %s\nPet: %s\n", name, petName)).end();
             }
         });

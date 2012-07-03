@@ -4,9 +4,9 @@ import org.webbitserver.HttpHandler;
 import org.webbitserver.HttpRequest;
 import org.webbitserver.HttpResponse;
 import org.webbitserver.WebServer;
-import org.weborganic.furi.Parameters;
-import org.weborganic.furi.URIParameters;
-import org.weborganic.furi.URITemplate;
+import org.webbitserver.rest.furi.FuriTemplateEngine;
+
+import java.util.Map;
 
 /**
  * Sinatra-style API around Webbit. Useful for defining RESTful APIs. Paths are defined according to the
@@ -14,9 +14,15 @@ import org.weborganic.furi.URITemplate;
  */
 public class Rest {
     private final WebServer webServer;
+    private final UriTemplateEngine uriTemplateEngine;
 
     public Rest(WebServer webServer) {
+        this(webServer, new FuriTemplateEngine());
+    }
+
+    public Rest(WebServer webServer, UriTemplateEngine uriTemplateEngine) {
         this.webServer = webServer;
+        this.uriTemplateEngine = uriTemplateEngine;
     }
 
     public Rest GET(String uriTemplate, HttpHandler httpHandler) {
@@ -40,7 +46,7 @@ public class Rest {
     }
 
     private Rest verbHandler(String verb, String uriTemplate, HttpHandler httpHandler) {
-        webServer.add(new UriTemplateHandler(uriTemplate, new HttpVerbHandler(verb, httpHandler)));
+        webServer.add(new UriTemplateHandler(uriTemplate, new HttpVerbHandler(verb, httpHandler), uriTemplateEngine));
         return this;
     }
 
@@ -51,8 +57,18 @@ public class Rest {
      * @param name    named segment from the uri-template
      * @return the parameter value
      */
-    public static String param(HttpRequest request, String name) {
+    public static Object param(HttpRequest request, String name) {
         return params(request).get(name);
+    }
+
+    public static String stringParam(HttpRequest request, String name) {
+        Object param = param(request, name);
+        return param == null ? null : param.toString();
+    }
+
+    public static Integer intParam(HttpRequest request, String name) {
+        String param = stringParam(request, name);
+        return param == null ? null : Integer.valueOf(param);
     }
 
     /**
@@ -61,8 +77,8 @@ public class Rest {
      * @param request the request holding the params
      * @return an object with all resolved variables
      */
-    public static UriMatch params(HttpRequest request) {
-        return (UriMatch) request.data(UriTemplateHandler.URI_MATCH);
+    public static Map<String, Object> params(HttpRequest request) {
+        return (Map<String, Object>) request.data(UriTemplateHandler.URI_MATCH);
     }
 
     /**
@@ -72,8 +88,8 @@ public class Rest {
      * @param uriTemplate   where to redirect
      * @param keyValuePairs Example: ["name", "Mickey", "pet", "Pluto"]
      */
-    public static void redirect(HttpResponse response, String uriTemplate, String... keyValuePairs) {
-        redirect(response, uriTemplate, params(keyValuePairs));
+    public void redirect(HttpResponse response, String uriTemplate, String... keyValuePairs) {
+        redirect(response, uriTemplateEngine.expand(uriTemplate, keyValuePairs));
     }
 
     /**
@@ -81,19 +97,13 @@ public class Rest {
      *
      * @param response    the response to redirect
      * @param uriTemplate where to redirect
-     * @param parameters  filled into the {@code uriTemplate}
+     * @param parameters  Example: {"name": "Mickey", "pet": "Pluto"}
      */
-    public static void redirect(HttpResponse response, String uriTemplate, Parameters parameters) {
-        String uri = URITemplate.expand(uriTemplate, parameters);
+    public void redirect(HttpResponse response, String uriTemplate, Map<String, Object> parameters) {
+        redirect(response, uriTemplateEngine.expand(uriTemplate, parameters));
+    }
+
+    private void redirect(HttpResponse response, String uri) {
         response.header("Location", uri).status(302).end();
     }
-
-    private static Parameters params(String[] parameters) {
-        Parameters params = new URIParameters();
-        for (int i = 0; i < parameters.length; i += 2) {
-            params.set(parameters[i], parameters[i + 1]);
-        }
-        return params;
-    }
-
 }

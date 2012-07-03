@@ -35,7 +35,7 @@
         <dependency>
             <groupId>org.webbitserver</groupId>
             <artifactId>webbit</artifactId>
-            <version>0.4.7</version>
+            <version>0.4.11</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -45,10 +45,17 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/furi-0.8.4.jar</systemPath>
         </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.samskivert</groupId>
+            <artifactId>jmustache</artifactId>
+            <version>1.5</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

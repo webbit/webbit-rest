@@ -5,6 +5,7 @@ import org.webbitserver.HttpControl;
 import org.webbitserver.HttpHandler;
 import org.webbitserver.HttpRequest;
 import org.webbitserver.HttpResponse;
+import org.webbitserver.rest.furi.FuriTemplateEngine;
 import org.webbitserver.stub.StubHttpControl;
 import org.webbitserver.stub.StubHttpRequest;
 import org.webbitserver.stub.StubHttpResponse;
@@ -16,25 +17,27 @@ import static org.webbitserver.rest.Rest.params;
 public class UriTemplateHandlerTest {
     @Test
     public void extractsValuesFromUriPatterns() throws Exception {
+        UriTemplateEngine uriTemplateEngine = new FuriTemplateEngine();
         UriTemplateHandler uth = new UriTemplateHandler("/foo/{name}/bar/{id}", new HttpHandler() {
             @Override
             public void handleHttpRequest(HttpRequest request, HttpResponse response, HttpControl control) throws Exception {
                 assertEquals("hello", params(request).get("name"));
                 assertEquals("96", params(request).get("id"));
             }
-        });
+        }, uriTemplateEngine);
         HttpRequest req = new StubHttpRequest("/foo/hello/bar/96");
         uth.handleHttpRequest(req, null, null);
     }
 
     @Test
     public void callsNextWhenNoMatch() throws Exception {
+        UriTemplateEngine uriTemplateEngine = new FuriTemplateEngine();
         UriTemplateHandler uth = new UriTemplateHandler("/foo/{name}/bar/{id}", new HttpHandler() {
             @Override
             public void handleHttpRequest(HttpRequest request, HttpResponse response, HttpControl control) throws Exception {
                 fail("Shouldn't get here");
             }
-        });
+        }, uriTemplateEngine);
         HttpRequest req = new StubHttpRequest("/fooh/ello/bar/96");
         HttpResponse res = new StubHttpResponse();
         HttpControl control = new StubHttpControl(req, res);

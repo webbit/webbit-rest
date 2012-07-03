@@ -13,7 +13,6 @@ import java.util.concurrent.ExecutionException;
 
 import static org.junit.Assert.assertEquals;
 import static org.webbitserver.WebServers.createWebServer;
-import static org.webbitserver.rest.Rest.param;
 import static org.webbitserver.rest.Rest.params;
 
 public class RestTest {
@@ -44,9 +43,9 @@ public class RestTest {
         rest.GET("/people/{name}/animals/{petName}", new HttpHandler() {
             @Override
             public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) {
-                Rest.redirect(res, "/people/{name}/pets/{petName}",
-                        "name", param(req, "name"),
-                        "petName", param(req, "petName")
+                rest.redirect(res, "/people/{name}/pets/{petName}",
+                        "name", rest.stringParam(req, "name"),
+                        "petName", rest.stringParam(req, "petName")
                 );
             }
         });
@@ -54,7 +53,7 @@ public class RestTest {
         rest.GET("/people/{name}/pets/{petName}", new HttpHandler() {
             @Override
             public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) {
-                res.content(String.format("Name: %s\nPet: %s\n", param(req, "name"), param(req, "petName"))).end();
+                res.content(String.format("Name: %s\nPet: %s\n", rest.stringParam(req, "name"), rest.stringParam(req, "petName"))).end();
             }
         });
         webServer.start().get();
