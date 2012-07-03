@@ -13,6 +13,8 @@ import java.util.Map;
  * <a href="http://tools.ietf.org/html/draft-gregorio-uritemplate-07">uritemplate</a> specification.
  */
 public class Rest {
+    public static final String URI_TEMPLATE_VARIABLES = "URI_MATCH";
+
     private final WebServer webServer;
     private final UriTemplateEngine uriTemplateEngine;
 
@@ -78,7 +80,7 @@ public class Rest {
      * @return an object with all resolved variables
      */
     public static Map<String, Object> params(HttpRequest request) {
-        return (Map<String, Object>) request.data(UriTemplateHandler.URI_MATCH);
+        return (Map<String, Object>) request.data(URI_TEMPLATE_VARIABLES);
     }
 
     /**

@@ -9,9 +9,6 @@ import java.net.URI;
 import java.util.Map;
 
 class UriTemplateHandler implements HttpHandler {
-
-    public static final String URI_MATCH = "URI_MATCH";
-
     private final HttpHandler httpHandler;
     private final String uriTemplate;
     private final UriTemplateEngine uriTemplateEngine;
@@ -28,7 +25,7 @@ class UriTemplateHandler implements HttpHandler {
 
         Map<String, Object> variables = uriTemplateEngine.extract(uriTemplate, path);
         if (variables != null) {
-            request.data(URI_MATCH, variables);
+            request.data(Rest.URI_TEMPLATE_VARIABLES, variables);
             httpHandler.handleHttpRequest(request, response, control);
         } else {
             control.nextHandler();
