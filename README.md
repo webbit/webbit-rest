@@ -36,6 +36,15 @@ rest.GET("/people/{name}/animals/{petName}", new HttpHandler() {
 });
 ```
 
+## EventSource support
+
+Just supply a `org.webbitserver.EventSourceHandler` as the last argument. Webbit-REST will forward the request to this
+handler if the request is an event source request (i.e. has a `Accept: text/event-stream` header).
+
+```java
+rest.GET("/people/{name}/animals/{petName}", myHttpHandler, myEventSourceHandler);
+```
+
 ## Installation
 
 ### Maven
