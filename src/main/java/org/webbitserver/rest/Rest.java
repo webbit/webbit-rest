@@ -1,5 +1,6 @@
 package org.webbitserver.rest;
 
+import org.webbitserver.EventSourceHandler;
 import org.webbitserver.HttpHandler;
 import org.webbitserver.HttpRequest;
 import org.webbitserver.HttpResponse;
@@ -28,27 +29,31 @@ public class Rest {
     }
 
     public Rest GET(String uriTemplate, HttpHandler httpHandler) {
-        return verbHandler("GET", uriTemplate, httpHandler);
+        return GET(uriTemplate, httpHandler, null);
+    }
+
+    public Rest GET(String uriTemplate, HttpHandler httpHandler, EventSourceHandler eventSourceHandler) {
+        return verbHandler("GET", uriTemplate, httpHandler, eventSourceHandler);
     }
 
     public Rest PUT(String uriTemplate, HttpHandler httpHandler) {
-        return verbHandler("PUT", uriTemplate, httpHandler);
+        return verbHandler("PUT", uriTemplate, httpHandler, null);
     }
 
     public Rest POST(String uriTemplate, HttpHandler httpHandler) {
-        return verbHandler("POST", uriTemplate, httpHandler);
+        return verbHandler("POST", uriTemplate, httpHandler, null);
     }
 
     public Rest DELETE(String uriTemplate, HttpHandler httpHandler) {
-        return verbHandler("DELETE", uriTemplate, httpHandler);
+        return verbHandler("DELETE", uriTemplate, httpHandler, null);
     }
 
     public Rest HEAD(String uriTemplate, HttpHandler httpHandler) {
-        return verbHandler("HEAD", uriTemplate, httpHandler);
+        return verbHandler("HEAD", uriTemplate, httpHandler, null);
     }
 
-    private Rest verbHandler(String verb, String uriTemplate, HttpHandler httpHandler) {
-        webServer.add(new UriTemplateHandler(uriTemplate, new HttpVerbHandler(verb, httpHandler), uriTemplateEngine));
+    private Rest verbHandler(String verb, String uriTemplate, HttpHandler httpHandler, EventSourceHandler eventSourceHandler) {
+        webServer.add(new UriTemplateHandler(uriTemplate, new HttpVerbHandler(verb, httpHandler, eventSourceHandler), uriTemplateEngine));
         return this;
     }
 
