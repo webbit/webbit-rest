@@ -7,10 +7,9 @@ import org.webbitserver.handler.EmbeddedResourceHandler;
 import org.webbitserver.handler.StaticFileHandler;
 import org.webbitserver.handler.TemplateEngine;
 
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,9 +33,9 @@ public class JMustacheEngine implements TemplateEngine {
     }
 
     @Override
-    public ByteBuffer process(int length, InputStream template, String path, Object context) throws IOException {
-        Template t = template(template, path);
-        return ByteBuffer.wrap(t.execute(context).getBytes(UTF8));
+    public byte[] process(byte[] template, String path, Object context) {
+        Template t = template(new ByteArrayInputStream(template), path);
+        return t.execute(context).getBytes(UTF8);
     }
 
     private Template template(InputStream template, String path) {
