@@ -9,7 +9,7 @@ import org.webbitserver.WebSocketHandler;
 import org.webbitserver.handler.HttpToEventSourceHandler;
 import org.webbitserver.handler.HttpToWebSocketHandler;
 
-class ProtocolDetectingHandler implements HttpHandler {
+public class ProtocolDetectingHandler implements HttpHandler {
     private final HttpHandler httpHandler;
     private final HttpHandler webSocketHandler;
     private final HttpHandler eventSourceHandler;

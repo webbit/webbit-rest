@@ -4,19 +4,24 @@ import org.webbitserver.HttpControl;
 import org.webbitserver.HttpHandler;
 import org.webbitserver.HttpRequest;
 import org.webbitserver.HttpResponse;
+import org.webbitserver.rest.furi.FuriProcessor;
 
 import java.net.URI;
 import java.util.Map;
 
-class UriTemplateHandler implements HttpHandler {
+public class UriTemplateHandler implements HttpHandler {
     private final HttpHandler httpHandler;
     private final String uriTemplate;
     private final UriTemplateProcessor uriTemplateProcessor;
 
+    public UriTemplateHandler(String uriTemplate, HttpHandler httpHandler) {
+        this(uriTemplate, httpHandler, new FuriProcessor());
+    }
+
     public UriTemplateHandler(String uriTemplate, HttpHandler httpHandler, UriTemplateProcessor uriTemplateProcessor) {
         this.uriTemplate = uriTemplate;
-        this.uriTemplateProcessor = uriTemplateProcessor;
         this.httpHandler = httpHandler;
+        this.uriTemplateProcessor = uriTemplateProcessor;
     }
 
     @Override

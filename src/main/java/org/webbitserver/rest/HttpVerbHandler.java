@@ -5,7 +5,7 @@ import org.webbitserver.HttpHandler;
 import org.webbitserver.HttpRequest;
 import org.webbitserver.HttpResponse;
 
-class HttpVerbHandler implements HttpHandler {
+public class HttpVerbHandler implements HttpHandler {
     private final String verb;
     private final HttpHandler httpHandler;
 

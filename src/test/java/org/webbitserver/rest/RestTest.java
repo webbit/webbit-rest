@@ -38,6 +38,19 @@ public class RestTest {
     }
 
     @Test
+    public void exposesEmptyTemplateUriParamsWhenThereAreNone() throws IOException, InterruptedException, ExecutionException {
+        rest.GET("/foo/bar", new HttpHandler() {
+            @Override
+            public void handleHttpRequest(HttpRequest req, HttpResponse res, HttpControl ctl) {
+                res.content(String.valueOf(params(req).size())).end();
+            }
+        });
+        webServer.start().get();
+        String result = HttpClient.contents(HttpClient.httpGet(webServer, "/foo/bar"));
+        assertEquals("0", result);
+    }
+
+    @Test
     public void providesEasyRedirectApi() throws IOException, InterruptedException, ExecutionException {
 
         rest.GET("/people/{name}/animals/{petName}", new HttpHandler() {
