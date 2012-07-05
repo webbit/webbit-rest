@@ -1,6 +1,6 @@
 package org.webbitserver.rest.furi;
 
-import org.webbitserver.rest.UriTemplateEngine;
+import org.webbitserver.rest.UriTemplateProcessor;
 import org.weborganic.furi.Parameters;
 import org.weborganic.furi.URIParameters;
 import org.weborganic.furi.URIPattern;
@@ -10,7 +10,7 @@ import org.weborganic.furi.URITemplate;
 
 import java.util.Map;
 
-public class FuriTemplateEngine implements UriTemplateEngine {
+public class FuriProcessor implements UriTemplateProcessor {
     @Override
     public String expand(String uriTemplate, String[] keyValuePairs) {
         return URITemplate.expand(uriTemplate, params(keyValuePairs));

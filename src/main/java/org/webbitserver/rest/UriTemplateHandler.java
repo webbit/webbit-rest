@@ -11,11 +11,11 @@ import java.util.Map;
 class UriTemplateHandler implements HttpHandler {
     private final HttpHandler httpHandler;
     private final String uriTemplate;
-    private final UriTemplateEngine uriTemplateEngine;
+    private final UriTemplateProcessor uriTemplateProcessor;
 
-    public UriTemplateHandler(String uriTemplate, HttpHandler httpHandler, UriTemplateEngine uriTemplateEngine) {
+    public UriTemplateHandler(String uriTemplate, HttpHandler httpHandler, UriTemplateProcessor uriTemplateProcessor) {
         this.uriTemplate = uriTemplate;
-        this.uriTemplateEngine = uriTemplateEngine;
+        this.uriTemplateProcessor = uriTemplateProcessor;
         this.httpHandler = httpHandler;
     }
 
@@ -23,7 +23,7 @@ class UriTemplateHandler implements HttpHandler {
     public void handleHttpRequest(HttpRequest request, HttpResponse response, HttpControl control) throws Exception {
         String path = URI.create(request.uri()).getPath();
 
-        Map<String, Object> variables = uriTemplateEngine.extract(uriTemplate, path);
+        Map<String, Object> variables = uriTemplateProcessor.extract(uriTemplate, path);
         if (variables != null) {
             request.data(Rest.URI_TEMPLATE_VARIABLES, variables);
             httpHandler.handleHttpRequest(request, response, control);

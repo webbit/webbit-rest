@@ -5,7 +5,8 @@ import org.webbitserver.HttpHandler;
 import org.webbitserver.HttpRequest;
 import org.webbitserver.HttpResponse;
 import org.webbitserver.WebServer;
-import org.webbitserver.rest.furi.FuriTemplateEngine;
+import org.webbitserver.WebSocketHandler;
+import org.webbitserver.rest.furi.FuriProcessor;
 
 import java.util.Map;
 
@@ -14,46 +15,75 @@ import java.util.Map;
  * <a href="http://tools.ietf.org/html/draft-gregorio-uritemplate-07">uritemplate</a> specification.
  */
 public class Rest {
-    public static final String URI_TEMPLATE_VARIABLES = "URI_MATCH";
+    public static final String URI_TEMPLATE_VARIABLES = "URI_TEMPLATE_VARIABLES";
 
     private final WebServer webServer;
-    private final UriTemplateEngine uriTemplateEngine;
+    private final UriTemplateProcessor uriTemplateProcessor;
 
     public Rest(WebServer webServer) {
-        this(webServer, new FuriTemplateEngine());
+        this(webServer, new FuriProcessor());
     }
 
-    public Rest(WebServer webServer, UriTemplateEngine uriTemplateEngine) {
+    public Rest(WebServer webServer, UriTemplateProcessor uriTemplateProcessor) {
         this.webServer = webServer;
-        this.uriTemplateEngine = uriTemplateEngine;
+        this.uriTemplateProcessor = uriTemplateProcessor;
     }
+
+    // 1 handler
 
     public Rest GET(String uriTemplate, HttpHandler httpHandler) {
-        return GET(uriTemplate, httpHandler, null);
+        return GET(uriTemplate, httpHandler, null, null);
     }
 
+    public Rest GET(String uriTemplate, EventSourceHandler eventSourceHandler) {
+        return GET(uriTemplate, null, eventSourceHandler, null);
+    }
+
+    public Rest GET(String uriTemplate, WebSocketHandler webSocketHandler) {
+        return GET(uriTemplate, null, null, webSocketHandler);
+    }
+
+    // 2 handlers
+
     public Rest GET(String uriTemplate, HttpHandler httpHandler, EventSourceHandler eventSourceHandler) {
-        return verbHandler("GET", uriTemplate, httpHandler, eventSourceHandler);
+        return GET(uriTemplate, httpHandler, eventSourceHandler, null);
+    }
+
+    public Rest GET(String uriTemplate, HttpHandler httpHandler, WebSocketHandler webSocketHandler) {
+        return GET(uriTemplate, httpHandler, null, webSocketHandler);
+    }
+
+    public Rest GET(String uriTemplate, EventSourceHandler eventSourceHandler, WebSocketHandler webSocketHandler) {
+        return GET(uriTemplate, null, eventSourceHandler, webSocketHandler);
+    }
+
+    // 3 handlers
+
+    public Rest GET(String uriTemplate, HttpHandler httpHandler, EventSourceHandler eventSourceHandler, WebSocketHandler webSocketHandler) {
+        return verbHandler("GET", uriTemplate, httpHandler, eventSourceHandler, webSocketHandler);
     }
 
     public Rest PUT(String uriTemplate, HttpHandler httpHandler) {
-        return verbHandler("PUT", uriTemplate, httpHandler, null);
+        return verbHandler("PUT", uriTemplate, httpHandler, null, null);
     }
 
     public Rest POST(String uriTemplate, HttpHandler httpHandler) {
-        return verbHandler("POST", uriTemplate, httpHandler, null);
+        return verbHandler("POST", uriTemplate, httpHandler, null, null);
     }
 
     public Rest DELETE(String uriTemplate, HttpHandler httpHandler) {
-        return verbHandler("DELETE", uriTemplate, httpHandler, null);
+        return verbHandler("DELETE", uriTemplate, httpHandler, null, null);
     }
 
     public Rest HEAD(String uriTemplate, HttpHandler httpHandler) {
-        return verbHandler("HEAD", uriTemplate, httpHandler, null);
+        return verbHandler("HEAD", uriTemplate, httpHandler, null, null);
     }
 
-    private Rest verbHandler(String verb, String uriTemplate, HttpHandler httpHandler, EventSourceHandler eventSourceHandler) {
-        webServer.add(new UriTemplateHandler(uriTemplate, new HttpVerbHandler(verb, httpHandler, eventSourceHandler), uriTemplateEngine));
+    private Rest verbHandler(String verb, String uriTemplate, HttpHandler httpHandler, EventSourceHandler eventSourceHandler, WebSocketHandler webSocketHandler) {
+        HttpHandler protocolDetectingHandler = new ProtocolDetectingHandler(httpHandler, eventSourceHandler, webSocketHandler);
+        HttpHandler httpVerbHandler = new HttpVerbHandler(verb, protocolDetectingHandler);
+        HttpHandler uriTemplateHandler = new UriTemplateHandler(uriTemplate, httpVerbHandler, uriTemplateProcessor);
+        webServer.add(uriTemplateHandler);
         return this;
     }
 
@@ -96,7 +126,7 @@ public class Rest {
      * @param keyValuePairs Example: ["name", "Mickey", "pet", "Pluto"]
      */
     public void redirect(HttpResponse response, String uriTemplate, String... keyValuePairs) {
-        redirect(response, uriTemplateEngine.expand(uriTemplate, keyValuePairs));
+        redirect(response, uriTemplateProcessor.expand(uriTemplate, keyValuePairs));
     }
 
     /**
@@ -107,10 +137,10 @@ public class Rest {
      * @param parameters  Example: {"name": "Mickey", "pet": "Pluto"}
      */
     public void redirect(HttpResponse response, String uriTemplate, Map<String, Object> parameters) {
-        redirect(response, uriTemplateEngine.expand(uriTemplate, parameters));
+        redirect(response, uriTemplateProcessor.expand(uriTemplate, parameters));
     }
 
-    private void redirect(HttpResponse response, String uri) {
+    public void redirect(HttpResponse response, String uri) {
         response.header("Location", uri).status(302).end();
     }
 }
