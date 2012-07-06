@@ -53,7 +53,7 @@ rest.GET("/people/{name}/animals/{petName}", myHttpHandler, myEventSourceHandler
 <dependency>
     <groupId>org.webbitserver</groupId>
     <artifactId>webbit-rest</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
 </dependency>
 ```
 
